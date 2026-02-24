@@ -367,3 +367,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /ArrayFile/A2.bin
 /ArrayFile/ArrayFile
+/ArrayFile/A3.bin
+/ArrayFile/B_no_zero.txt

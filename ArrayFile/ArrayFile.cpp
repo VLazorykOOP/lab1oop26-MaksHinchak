@@ -159,7 +159,49 @@ void ReadBinToArrayAndPrint(const char* inBin)
 }
 
 // 3.3 задачі
-void Solve_Task1_5_FromText_ToText(const char*, const char*) { cout << "TODO Task1#5\n"; }
+//  Task 1 №5
+int Task1_5_RemoveZeros(int n, double* A, double*& B)
+{
+    int m = 0;
+    for (int i = 0; i < n; i++)
+        if (A[i] != 0.0) m++;
+
+    B = new double[m];
+    if (B == nullptr) return 0;
+
+    int j = 0;
+    for (int i = 0; i < n; i++)
+        if (A[i] != 0.0) B[j++] = A[i];
+
+    return m;
+}
+
+void Solve_Task1_5_FromText_ToText(const char* inTxt, const char* outTxt)
+{
+    const int MAX = 560;
+    double A[MAX];
+
+    int n = ReadArrayTextFile(MAX, A, inTxt);
+    if (n <= 0) { cout << "Error read: " << inTxt << "\n"; return; }
+
+    double* B = nullptr;
+    int m = Task1_5_RemoveZeros(n, A, B);
+
+    if (m <= 0 || B == nullptr) {
+        cout << "Task1#5: no data\n";
+        return;
+    }
+
+    WriteArrayTextFile(m, B, outTxt);
+
+    cout << "Task1#5 result (B without zeros), m=" << m << ":\n";
+    for (int i = 0; i < m; i++) cout << B[i] << "   ";
+    cout << "\n";
+
+    cout << "Saved: " << outTxt << "\n";
+
+    delete[] B;
+}
 void Solve_Task2_5_FromBinX_ToText(const char*, const char*, const char*) { cout << "TODO Task2#5\n"; }
 void Solve_Task3_5_FromBin_ToText(const char*, const char*) { cout << "TODO Task3#5\n"; }
 
