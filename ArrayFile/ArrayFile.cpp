@@ -108,6 +108,27 @@ int ReadXandArrayFromText(const char* fileName, int maxN, double& X, double A[])
     return n;
 }
 
+int ReadZFile(const char* fileName, int maxSize, int& n, double A[])
+{
+    ifstream fin(fileName);
+    if (!fin) {
+        cout << "Cannot open " << fileName << "\n";
+        return 0;
+    }
+
+    fin >> n;
+
+    int total = 2 * n;
+    if (total > maxSize)
+        total = maxSize;
+
+    for (int i = 0; i < total; i++)
+        fin >> A[i];
+
+    fin.close();
+    return total;
+}
+
 // 3.1
 void Lab_3_1_TextInputAndSave(const char* txtName)
 {
@@ -238,10 +259,6 @@ void Solve_Task2_5_FromXFile_ToText(const char* inXTxt, const char* outTxt)
     double X;
 
     int n = ReadXandArrayFromText(inXTxt, MAX, X, A);
-    if (n <= 0) {
-        cout << "Error: cannot read data from " << inXTxt << "\n";
-        return;
-    }
 
     cout << "X = " << X << "\n";
     cout << "A: ";
@@ -268,7 +285,48 @@ void Solve_Task2_5_FromXFile_ToText(const char* inXTxt, const char* outTxt)
     fout.close();
     cout << "Saved: " << outTxt << "\n";
 }
-void Solve_Task3_5_FromBin_ToText(const char*, const char*) { cout << "TODO Task3#5\n"; }
+void Task3_5(int n2, double* A, double& avg, double& sum)
+{
+
+    int n = n2 / 2;
+
+    avg = 0.0;
+    for (int i = 0; i < n; i++) avg += A[i];
+    avg /= (double)n;
+
+    sum = 0.0;
+    for (int i = n; i < n2; i++)
+        if (A[i] > avg) sum += A[i];
+
+}
+
+void Solve_Task3_5_FromZ_ToText(const char* inZTxt, const char* outTxt)
+{
+    const int MAX = 560;
+    double A[MAX];
+    int n = 0;
+
+    int n2 = ReadZFile(inZTxt, MAX, n, A);
+    if (n2 <= 0) { cout << "Error read: " << inZTxt << "\n"; return; }
+
+    double avg = 0.0, sum = 0.0;
+    Task3_5(n2, A, avg, sum);
+
+    ofstream fout(outTxt);
+    if (!fout) { cout << "Error write: " << outTxt << "\n"; return; }
+
+        fout << "n=" << (n2 / 2) << "\n";
+        fout << "avg=" << avg << "\n";
+        fout << "sum=" << sum << "\n";
+
+        cout << "Task3#5 result:\n";
+        cout << "n = " << (n2 / 2) << "\n";
+        cout << "avg(first half) = " << avg << "\n";
+        cout << "sum(second half > avg) = " << sum << "\n";
+
+    fout.close();
+    cout << "Saved: " << outTxt << "\n";
+}
 
 // menu
 void ShowMainMenu()
@@ -279,7 +337,7 @@ void ShowMainMenu()
     cout << "3) 3.2 Random -> A3.bin (2n)\n";
     cout << "4) 3.3 Solve Task1#5 (A1.txt -> B_no_zero.txt)\n";
     cout << "5) 3.3 Solve Task2#5 (X.txt -> Result2_5.txt)\n";
-    cout << "6) 3.3 Solve Task3#5 (A3.bin -> Result3_5.txt) [TODO]\n";
+    cout << "6) 3.3 Solve Task3#5 (Z.txt -> Result3_5.txt)\n";
     cout << "7) 3.4 Print container from A1.txt\n";
     cout << "8) 3.4 Print container from A2.bin\n";
     cout << "9) 3.4 Print container from A3.bin\n";
@@ -301,7 +359,7 @@ int main()
             case '3': Lab_3_2_RandomAndSaveBin("A3.bin", "X_unused.txt", 0); break;
             case '4': Solve_Task1_5_FromText_ToText("A1.txt", "B_no_zero.txt"); break;
             case '5': Solve_Task2_5_FromXFile_ToText("X.txt", "Result2_5.txt"); break;
-            case '6': Solve_Task3_5_FromBin_ToText("A3.bin", "Result3_5.txt"); break;
+            case '6': Solve_Task3_5_FromZ_ToText("Z.txt", "Result3_5.txt"); break;
             case '7': ReadTextToArrayAndPrint("A1.txt"); break;
             case '8': ReadBinToArrayAndPrint("A2.bin"); break;
             case '9': ReadBinToArrayAndPrint("A3.bin"); break;
