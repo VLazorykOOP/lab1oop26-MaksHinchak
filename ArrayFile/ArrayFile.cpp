@@ -36,8 +36,7 @@ int RndInputArray(int sizeMax, double A[])
     for (int i = 0; i < size; i++) {
         r1 = rand();
         r2 = rand();
-        A[i] = 100.0 * r1;
-        A[i] = A[i] / (1.0 + r2);
+        A[i] = (2 * r1)-r2;
         cout << A[i] << "   ";
     }
     cout << "\n";
@@ -95,6 +94,18 @@ int ReadArrayBinFile(int n, double* arr, const char* fileName)
     bfin.read((char*)arr, static_cast<std::streamsize>(size) * sizeof(double));
     bfin.close();
     return size;
+}
+int ReadXandArrayFromText(const char* fileName, int maxN, double& X, double A[])
+{
+    ifstream fin(fileName);
+    if (!fin) return 0;
+
+    fin >> X;
+    int n = 0;
+    while (n < maxN && (fin >> A[n])) n++;
+
+    fin.close();
+    return n;
 }
 
 // 3.1
@@ -167,7 +178,6 @@ int Task1_5_RemoveZeros(int n, double* A, double*& B)
         if (A[i] != 0.0) m++;
 
     B = new double[m];
-    if (B == nullptr) return 0;
 
     int j = 0;
     for (int i = 0; i < n; i++)
@@ -202,7 +212,62 @@ void Solve_Task1_5_FromText_ToText(const char* inTxt, const char* outTxt)
 
     delete[] B;
 }
-void Solve_Task2_5_FromBinX_ToText(const char*, const char*, const char*) { cout << "TODO Task2#5\n"; }
+// Task 2 №5
+int Task2_5_MaxNegativeLessThanX(int n, double* A, double X, double& result)
+{
+    int found = 0;
+
+    for (int i = 0; i < n; i++) {
+        if (A[i] < 0 && A[i] < X) {
+            if (!found) {
+                result = A[i];
+                found = 1;
+            }
+            else if (A[i] > result) {
+                result = A[i];
+            }
+        }
+    }
+    return found;
+}
+
+void Solve_Task2_5_FromXFile_ToText(const char* inXTxt, const char* outTxt)
+{
+    const int MAX = 560;
+    double A[MAX];
+    double X;
+
+    int n = ReadXandArrayFromText(inXTxt, MAX, X, A);
+    if (n <= 0) {
+        cout << "Error: cannot read data from " << inXTxt << "\n";
+        return;
+    }
+
+    cout << "X = " << X << "\n";
+    cout << "A: ";
+    for (int i = 0; i < n; i++) cout << A[i] << " ";
+    cout << "\n";
+
+    double ans = 0.0;
+    int ok = Task2_5_MaxNegativeLessThanX(n, A, X, ans);
+
+    ofstream fout(outTxt);
+    if (!fout) {
+        cout << "Error: cannot write " << outTxt << "\n";
+        return;
+    }
+
+    if (ok) {
+        fout << ans << "\n";
+        cout << "Answer: " << ans << "\n";
+    } else {
+        fout << "No answer\n";
+        cout << "No answer\n";
+    }
+
+    fout.close();
+    cout << "Saved: " << outTxt << "\n";
+}
 void Solve_Task3_5_FromBin_ToText(const char*, const char*) { cout << "TODO Task3#5\n"; }
 
 // menu
@@ -212,8 +277,8 @@ void ShowMainMenu()
     cout << "1) 3.1 Console -> A1.txt\n";
     cout << "2) 3.2 Random -> A2.bin + X.txt\n";
     cout << "3) 3.2 Random -> A3.bin (2n)\n";
-    cout << "4) 3.3 Solve Task1#5 (A1.txt -> B_no_zero.txt) [TODO]\n";
-    cout << "5) 3.3 Solve Task2#5 (A2.bin + X.txt -> Result2_5.txt) [TODO]\n";
+    cout << "4) 3.3 Solve Task1#5 (A1.txt -> B_no_zero.txt)\n";
+    cout << "5) 3.3 Solve Task2#5 (X.txt -> Result2_5.txt)\n";
     cout << "6) 3.3 Solve Task3#5 (A3.bin -> Result3_5.txt) [TODO]\n";
     cout << "7) 3.4 Print container from A1.txt\n";
     cout << "8) 3.4 Print container from A2.bin\n";
@@ -231,20 +296,17 @@ int main()
         cin >> choice;
 
         switch (choice) {
-        case '1': Lab_3_1_TextInputAndSave("A1.txt"); break;
-        case '2': Lab_3_2_RandomAndSaveBin("A2.bin", "X.txt", 1); break;
-        case '3': Lab_3_2_RandomAndSaveBin("A3.bin", "X_unused.txt", 0); break;
-
-        case '4': Solve_Task1_5_FromText_ToText("A1.txt", "B_no_zero.txt"); break;
-        case '5': Solve_Task2_5_FromBinX_ToText("A2.bin", "X.txt", "Result2_5.txt"); break;
-        case '6': Solve_Task3_5_FromBin_ToText("A3.bin", "Result3_5.txt"); break;
-
-        case '7': ReadTextToArrayAndPrint("A1.txt"); break;
-        case '8': ReadBinToArrayAndPrint("A2.bin"); break;
-        case '9': ReadBinToArrayAndPrint("A3.bin"); break;
-
-        case '0': return 0;
-        default: cout << "Wrong choice\n";
+            case '1': Lab_3_1_TextInputAndSave("A1.txt"); break;
+            case '2': Lab_3_2_RandomAndSaveBin("A2.bin", "X.txt", 1); break;
+            case '3': Lab_3_2_RandomAndSaveBin("A3.bin", "X_unused.txt", 0); break;
+            case '4': Solve_Task1_5_FromText_ToText("A1.txt", "B_no_zero.txt"); break;
+            case '5': Solve_Task2_5_FromXFile_ToText("X.txt", "Result2_5.txt"); break;
+            case '6': Solve_Task3_5_FromBin_ToText("A3.bin", "Result3_5.txt"); break;
+            case '7': ReadTextToArrayAndPrint("A1.txt"); break;
+            case '8': ReadBinToArrayAndPrint("A2.bin"); break;
+            case '9': ReadBinToArrayAndPrint("A3.bin"); break;
+            case '0': return 0;
+            default: cout << "Wrong choice\n";
         }
     }
 }
