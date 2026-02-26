@@ -2,8 +2,6 @@
 #include <fstream>
 #include <ios>
 #include <array>
-#include <time.h>
-
 using namespace std;
 
 int ConsoleInputSizeArray(const int sizeMax)
@@ -140,7 +138,7 @@ void Lab_3_1_TextInputAndSave(const char* txtName)
 }
 
 // 3.2
-void Lab_3_2_RandomAndSaveBin(const char* binName, const char* xTxtName, int needX)
+void Lab_3_2_RandomAndSaveBin(const char* binName)
 {
     const int MAX = 560;
     double A[MAX];
@@ -148,19 +146,6 @@ void Lab_3_2_RandomAndSaveBin(const char* binName, const char* xTxtName, int nee
 
     WriteArrayBinFile(n, A, binName);
     cout << "Saved: " << binName << "\n";
-
-    if (needX) {
-        double X;
-        cout << "Input X: ";
-        cin >> X;
-
-        ofstream fout(xTxtName);
-        if (!fout.fail()) {
-            fout << X;
-            fout.close();
-            cout << "Saved: " << xTxtName << "\n";
-        }
-    }
 }
 
 // 3.4 (container: std::array)
@@ -265,7 +250,7 @@ void Solve_Task2_5_FromXFile_ToText(const char* inXTxt, const char* outTxt)
     for (int i = 0; i < n; i++) cout << A[i] << " ";
     cout << "\n";
 
-    double ans = 0.0;
+    double ans = 0;
     int ok = Task2_5_MaxNegativeLessThanX(n, A, X, ans);
 
     ofstream fout(outTxt);
@@ -332,15 +317,13 @@ void Solve_Task3_5_FromZ_ToText(const char* inZTxt, const char* outTxt)
 void ShowMainMenu()
 {
     cout << "\n===== MENU (Variant 5) =====\n";
-    cout << "1) 3.1 Console -> A1.txt\n";
-    cout << "2) 3.2 Random -> A2.bin + X.txt\n";
-    cout << "3) 3.2 Random -> A3.bin (2n)\n";
-    cout << "4) 3.3 Solve Task1#5 (A1.txt -> B_no_zero.txt)\n";
-    cout << "5) 3.3 Solve Task2#5 (X.txt -> Result2_5.txt)\n";
-    cout << "6) 3.3 Solve Task3#5 (Z.txt -> Result3_5.txt)\n";
-    cout << "7) 3.4 Print container from A1.txt\n";
-    cout << "8) 3.4 Print container from A2.bin\n";
-    cout << "9) 3.4 Print container from A3.bin\n";
+    cout << "1) 3.1 Console -> ConsoleInput.txt\n";
+    cout << "2) 3.2 Random -> RandomBIN.bin\n";
+    cout << "3) 3.3 Solve Task1#5 (A1.txt -> B_no_zero.txt)\n";
+    cout << "4) 3.3 Solve Task2#5 (X.txt -> Result2_5.txt)\n";
+    cout << "5) 3.3 Solve Task3#5 (Z.txt -> Result3_5.txt)\n";
+    cout << "6) 3.4 Print container from A1.txt\n";
+    cout << "7) 3.4 Print container from RandomBIN.bin\n";
     cout << "0) Exit\n";
     cout << "Choice: ";
 }
@@ -354,15 +337,13 @@ int main()
         cin >> choice;
 
         switch (choice) {
-            case '1': Lab_3_1_TextInputAndSave("A1.txt"); break;
-            case '2': Lab_3_2_RandomAndSaveBin("A2.bin", "X.txt", 1); break;
-            case '3': Lab_3_2_RandomAndSaveBin("A3.bin", "X_unused.txt", 0); break;
-            case '4': Solve_Task1_5_FromText_ToText("A1.txt", "B_no_zero.txt"); break;
-            case '5': Solve_Task2_5_FromXFile_ToText("X.txt", "Result2_5.txt"); break;
-            case '6': Solve_Task3_5_FromZ_ToText("Z.txt", "Result3_5.txt"); break;
-            case '7': ReadTextToArrayAndPrint("A1.txt"); break;
-            case '8': ReadBinToArrayAndPrint("A2.bin"); break;
-            case '9': ReadBinToArrayAndPrint("A3.bin"); break;
+            case '1': Lab_3_1_TextInputAndSave("ConsoleInput.txt"); break;
+            case '2': Lab_3_2_RandomAndSaveBin("RandomBIN.bin"); break;
+            case '3': Solve_Task1_5_FromText_ToText("A1.txt", "B_no_zero.txt"); break;
+            case '4': Solve_Task2_5_FromXFile_ToText("X.txt", "Result2_5.txt"); break;
+            case '5': Solve_Task3_5_FromZ_ToText("Z.txt", "Result3_5.txt"); break;
+            case '6': ReadTextToArrayAndPrint("A1.txt"); break;
+            case '7': ReadBinToArrayAndPrint("RandomBIN.bin"); break;
             case '0': return 0;
             default: cout << "Wrong choice\n";
         }
